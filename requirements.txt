@@ -1,0 +1,7 @@
+streamlit
+langchain
+python-pptx
+Pillow
+pytesseract
+qdrant-client
+fastembed
