@@ -12,6 +12,105 @@ The application is composed of the following components:
 -   **Vector Database**: Qdrant is used for storing and searching vectorized metadata.
 -   **Storage**: A local `files` directory is used to store the uploaded PPT files.
 
+# Architecture for PPT RAG Agent
+
+This design outlines a Retrieval-Augmented Generation (RAG) agent for PowerPoint file upload, metadata extraction, vector storage, and semantic search—implemented with Streamlit and LangGraph.
+
+## 1. PPT Upload and Vector Store Workflow
+
+### Overview
+- **Frontend:** Streamlit app for file upload and search interface.
+- **Backend Orchestration:** LangGraph coordinates file processing and RAG search.
+- **Storage:** Uploaded PPT files saved to disk; metadata stored in a vector database for retrieval.
+
+### Steps
+
+#### A. File Upload (Streamlit)
+- Users upload `.pptx` files through a Streamlit file uploader widget.
+- Files are temporarily held in memory, processed, then stored in a designated folder for later retrieval.[1][2][3]
+
+#### B. Metadata Extraction (Backend Processing)
+For each uploaded PPT file:
+- **a. Extract Text:** Read all textual content from slides using Python libraries like `python-pptx`.
+- **b. Slide as Image:** Render each slide as an image (to capture visual diagrams/architectures), process these images (e.g., OCR or image embeddings for diagrams).
+- **c. Extract Comments:** Parse slide comments using libraries like `win32com` on Windows or by unzipping the `.pptx` to read the underlying XML.[4][5][6]
+- Compile a unified metadata object containing:
+  - Slide texts
+  - Image-based embeddings
+  - Comments and notes
+
+#### C. Vector Database Storage
+- Extracted metadata (text, image embeddings, comments) is chunked and converted to vector embeddings using an embedding model.
+- Store these embeddings along with metadata in the vector database (e.g., Pinecone, Qdrant, Weaviate, Milvus).[7][8][9]
+- Persist the original PPT file in a local (or cloud) storage folder.
+
+## 2. Semantic Search with Rational Explanation
+
+### A. User Query (via Streamlit)
+- User inputs a natural language query.
+
+### B. RAG Pipeline (LangGraph Orchestration)
+- The natural language query is embedded and sent to the vector database to perform similarity search across all stored PPT metadata.
+- Retrieve a ranked list of relevant PPT files, with each result accompanied by a rational explanation—why the file is related (e.g., matching text, similar architecture diagram, relevant comments).[10][11][12][13]
+- Optionally, provide runners-up with lower relevance scores and their rationales.
+
+## Component Interaction Diagram
+
+| Component         | Description                                                                                 |
+|-------------------|---------------------------------------------------------------------------------------------|
+| Streamlit UI      | For file upload, search input, and results display.                                         |
+| Metadata Extract  | Python functions (called by LangGraph) to process PPT files and extract all metadata types. |
+| Vector DB         | Stores embeddings and metadata for semantic search.                                         |
+| Storage Folder    | Persistent storage for raw PPT files.                                                       |
+| LangGraph Flow    | Orchestrates processing (on ingestion) and querying (on search).                            |
+
+## Technologies/Frameworks
+
+- **Streamlit:** For the web interface for upload/search.[2][3][1]
+- **LangGraph:** Orchestration of ingestion and search workflows.[11][13][14][10]
+- **python-pptx, PIL, OCR:** For reading and rendering PPT content.[6][4]
+- **Vector DBs:** Pinecone, Qdrant, or Weaviate for fast vector search.[8][9][7]
+- **Storage:** File system or S3 for PPT files.
+
+## High-Level Flow
+
+1. **Upload:** User uploads a PPT file through the app.
+2. **Process:**
+    - Extract text from slides.
+    - Render images from slides and (optionally) run OCR/embedding models.
+    - Extract comments/notes.
+3. **Store:**
+    - Save the vectorized metadata to the vector database.
+    - Save the original PPT to storage.
+4. **Search:**
+    - User submits a query.
+    - System retrieves and ranks matching PPTs from the vector DB.
+    - Shows results with rationales.
+
+## Example Pseudocode for Core Steps
+
+```python
+# Streamlit upload
+uploaded_file = st.file_uploader("Upload PPT", type=["pptx"])
+if uploaded_file:
+    save_to_storage(uploaded_file)
+    metadata = extract_all_metadata(uploaded_file)
+    store_in_vector_db(metadata)
+
+# Search
+query = st.text_input("Search PPTs")
+if query:
+    results = langgraph_rag_search(query)
+    st.write(results)
+```
+
+## Key Considerations
+
+- **Metadata Coverage:** Ensure text, image, and comments are all captured to maximize search accuracy.
+- **Vector Storage Efficiency:** Be prepared for storage overhead (vector representations may be 10x larger than original text).[7]
+- **Scalability:** Use a vector DB that fits scale/performance requirements; optimize for relevant real-world queries.
+
+
 ### High-Level Flow
 
 1.  **Upload**: A user uploads a PPT file through the Streamlit application.
