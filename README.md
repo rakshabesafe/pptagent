@@ -54,3 +54,31 @@ To deploy and run the application, follow these steps:
     ```
 
 4.  **Access the application**: Open your web browser and navigate to the URL provided by Streamlit (usually `http://localhost:8501`).
+
+## Development
+
+This project uses `flake8` for linting and `black` for code formatting.
+
+### Development Dependencies
+
+To install the development dependencies, run:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+### Running Quality Checks
+
+To run the quality checks locally, use the following commands:
+
+**Linting with `flake8`:**
+
+```bash
+flake8 .
+```
+
+**Checking formatting with `black`:**
+
+```bash
+black --check .
+```
