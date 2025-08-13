@@ -27,13 +27,13 @@ This design outlines a Retrieval-Augmented Generation (RAG) agent for PowerPoint
 
 #### A. File Upload (Streamlit)
 - Users upload `.pptx` files through a Streamlit file uploader widget.
-- Files are temporarily held in memory, processed, then stored in a designated folder for later retrieval.[1][2][3]
+- Files are temporarily held in memory, processed, then stored in a designated folder for later retrieval.
 
 #### B. Metadata Extraction (Backend Processing)
 For each uploaded PPT file:
 - **a. Extract Text:** Read all textual content from slides using Python libraries like `python-pptx`.
 - **b. Slide as Image:** Render each slide as an image (to capture visual diagrams/architectures), process these images (e.g., OCR or image embeddings for diagrams).
-- **c. Extract Comments:** Parse slide comments using libraries like `win32com` on Windows or by unzipping the `.pptx` to read the underlying XML.[4][5][6]
+- **c. Extract Comments:** Parse slide comments using libraries like `win32com` on Windows or by unzipping the `.pptx` to read the underlying XML.
 - Compile a unified metadata object containing:
   - Slide texts
   - Image-based embeddings
@@ -41,7 +41,7 @@ For each uploaded PPT file:
 
 #### C. Vector Database Storage
 - Extracted metadata (text, image embeddings, comments) is chunked and converted to vector embeddings using an embedding model.
-- Store these embeddings along with metadata in the vector database (e.g., Pinecone, Qdrant, Weaviate, Milvus).[7][8][9]
+- Store these embeddings along with metadata in the vector database (e.g., Pinecone, Qdrant, Weaviate, Milvus).
 - Persist the original PPT file in a local (or cloud) storage folder.
 
 ## 2. Semantic Search with Rational Explanation
@@ -51,7 +51,7 @@ For each uploaded PPT file:
 
 ### B. RAG Pipeline (LangGraph Orchestration)
 - The natural language query is embedded and sent to the vector database to perform similarity search across all stored PPT metadata.
-- Retrieve a ranked list of relevant PPT files, with each result accompanied by a rational explanation—why the file is related (e.g., matching text, similar architecture diagram, relevant comments).[10][11][12][13]
+- Retrieve a ranked list of relevant PPT files, with each result accompanied by a rational explanation—why the file is related (e.g., matching text, similar architecture diagram, relevant comments).
 - Optionally, provide runners-up with lower relevance scores and their rationales.
 
 ## Component Interaction Diagram
@@ -66,10 +66,10 @@ For each uploaded PPT file:
 
 ## Technologies/Frameworks
 
-- **Streamlit:** For the web interface for upload/search.[2][3][1]
-- **LangGraph:** Orchestration of ingestion and search workflows.[11][13][14][10]
-- **python-pptx, PIL, OCR:** For reading and rendering PPT content.[6][4]
-- **Vector DBs:** Pinecone, Qdrant, or Weaviate for fast vector search.[8][9][7]
+- **Streamlit:** For the web interface for upload/search.
+- **LangGraph:** Orchestration of ingestion and search workflows.
+- **python-pptx, PIL, OCR:** For reading and rendering PPT content.
+- **Vector DBs:** Pinecone, Qdrant, or Weaviate for fast vector search.
 - **Storage:** File system or S3 for PPT files.
 
 ## High-Level Flow
@@ -107,7 +107,7 @@ if query:
 ## Key Considerations
 
 - **Metadata Coverage:** Ensure text, image, and comments are all captured to maximize search accuracy.
-- **Vector Storage Efficiency:** Be prepared for storage overhead (vector representations may be 10x larger than original text).[7]
+- **Vector Storage Efficiency:** Be prepared for storage overhead (vector representations may be 10x larger than original text).
 - **Scalability:** Use a vector DB that fits scale/performance requirements; optimize for relevant real-world queries.
 
 
